@@ -22,6 +22,7 @@ import {
 } from '@app/entity/domain/user/User.dto.entity';
 import { User } from '@app/entity/domain/user/User.entity';
 import { UserService } from '@app/entity/domain/user/User.service';
+import { Response } from '@app/response/response/response.interface';
 import { UpdateResult } from 'typeorm';
 
 @ApiTags('users')
@@ -35,8 +36,10 @@ export class UserController {
   async findAll(
     @Query('offset', new DefaultValuePipe(0), ParseIntPipe) offset: number,
     @Query('limit', new DefaultValuePipe(15), ParseIntPipe) limit: number,
-  ): Promise<Array<User>> {
-    return this.userService.findAll(offset, limit);
+  ): Promise<Response<User>> {
+    const users = await this.userService.findAll(offset, limit);
+    const total = await this.userService.countTotal();
+    return { items: users, total };
   }
 
   @Get('/:id')

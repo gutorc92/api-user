@@ -23,6 +23,12 @@
       ],
       "@app/entity/*": [
         "libs/entity/src/*"
+      ],
+      "@app/response": [
+        "libs/response/src"
+      ],
+      "@app/response/*": [
+        "libs/response/src/*"
       ]
     }
   }

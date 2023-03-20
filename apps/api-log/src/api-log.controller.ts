@@ -13,6 +13,7 @@ import { DefaultValuePipe, ParseIntPipe } from '@nestjs/common';
 import { LogService } from '@app/entity/domain/log/Log.service';
 import { Log } from '@app/entity/domain/log/Log.entity';
 import { CreateLogDto } from '@app/entity/domain/log/Log.dto.entity';
+import { Response } from '@app/response/response/response.interface';
 
 @Controller('logs')
 export class ApiLogController {
@@ -23,8 +24,10 @@ export class ApiLogController {
     @Query('offset', new DefaultValuePipe(0), ParseIntPipe) offset: number,
     @Query('limit', new DefaultValuePipe(15), ParseIntPipe) limit: number,
     @Query('order', new DefaultValuePipe(0), ParseIntPipe) order: number,
-  ): Promise<Array<Log>> {
-    return this.logService.findAll(offset, limit, order);
+  ): Promise<Response<Log>> {
+    const logs = await this.logService.findAll(offset, limit, order);
+    const total = await this.logService.countTotal();
+    return { items: logs, total };
   }
 
   @Get('/:id')

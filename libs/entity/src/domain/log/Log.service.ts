@@ -16,6 +16,10 @@ export class LogService {
     this.logger.debug('ttl');
   }
 
+  async countTotal() {
+    return this.logRepository.count();
+  }
+
   async findAll(
     offset: number,
     limit: number,

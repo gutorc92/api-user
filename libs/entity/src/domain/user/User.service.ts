@@ -16,12 +16,23 @@ export class UserService {
     this.logger.debug('ttl');
   }
 
+  async countTotal() {
+    return this.userRepository.count({
+      where: {
+        deleted: false,
+      },
+    });
+  }
+
   async findAll(
     offset: number,
     limit: number,
     order?: number,
   ): Promise<Array<User>> {
     return this.userRepository.find({
+      where: {
+        deleted: false,
+      },
       order: { createdAt: order ? -1 : 1 },
       take: limit,
       skip: offset,

@@ -79,7 +79,8 @@
       "<rootDir>/libs/"
     ],
     "moduleNameMapper": {
-      "^@app/entity(|/.*)$": "<rootDir>/libs/entity/src/$1"
+      "^@app/entity(|/.*)$": "<rootDir>/libs/entity/src/$1",
+      "^@app/response(|/.*)$": "<rootDir>/libs/response/src/$1"
     }
   }
 }
