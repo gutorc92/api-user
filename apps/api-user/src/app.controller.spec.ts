@@ -1,22 +1,42 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { UserController } from './app.controller';
+import { UserService } from '@app/entity/domain/user/User.service';
+import { User } from '@app/entity/domain/user/User.entity';
+import { getRepositoryToken } from '@nestjs/typeorm';
+
+const user1 = new User();
+user1.name = 'Teste';
+user1.id = 1;
+user1.email = 'testando@teste.com';
+user1.deleted = false;
+user1.lastName = 'Testando';
+user1.password = 'teste';
+user1.createdAt = new Date();
 
 describe('AppController', () => {
-  let appController: AppController;
+  let appController: UserController;
 
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
-      controllers: [AppController],
-      providers: [AppService],
+      controllers: [UserController],
+      providers: [
+        UserService,
+        {
+          provide: getRepositoryToken(User),
+          useValue: {
+            findOneOrFail: jest.fn().mockResolvedValue(user1),
+          },
+        },
+      ],
     }).compile();
 
-    appController = app.get<AppController>(AppController);
+    appController = app.get<UserController>(UserController);
   });
 
   describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(appController.getHello()).toBe('Hello World!');
+    it('should return "Hello World!"', async () => {
+      const result = await appController.findOne(1);
+      expect(result).toBe(user1);
     });
   });
 });
