@@ -3,6 +3,9 @@ services:
   rabbitmq:
     image: rabbitmq:3.11.10-management
     container_name: 'rabbitmq'
+    volumes:
+    - ./init/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+    - ./init/definitions.json:/etc/rabbitmq/definitions.json:ro
     ports:
       - 5672:5672
       - 15672:15672
@@ -37,6 +40,82 @@ services:
       - data_net
     ports:
       - "5433:5432"
+  
+  service-log:
+    build: 
+      context: .
+      dockerfile: ./apps/service-log/Dockerfile
+    container_name: service-log
+    environment:
+      API_LOG_DATABASE_HOST: postgres2
+      API_LOG_DATABASE_PORT: 5432
+      API_LOG_DATABASE_USER: postgres
+      API_LOG_DATABASE_PASSWORD: Postgres2022!
+      API_LOG_DATABASE_DB: log
+      API_LOG_DATABASE_LOG: "true"
+      RABBITMQ_USER: user
+      RABBITMQ_PASSWORD: 123456
+      RABBITMQ_QUEUE: log-messages
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_VHOST: /
+    depends_on:
+      - rabbitmq
+      - postgres2
+    networks:
+      - data_net
+
+  api-log:
+    build: 
+      context: .
+      dockerfile: ./apps/api-log/Dockerfile
+    container_name: api-log
+    environment:
+      API_LOG_DATABASE_HOST: postgres2
+      API_LOG_DATABASE_PORT: 5432
+      API_LOG_DATABASE_USER: postgres
+      API_LOG_DATABASE_PASSWORD: Postgres2022!
+      API_LOG_DATABASE_DB: log
+      API_LOG_DATABASE_LOG: "true"
+      RABBITMQ_USER: user
+      RABBITMQ_PASSWORD: 123456
+      RABBITMQ_QUEUE: log-messages
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_VHOST: /
+    ports:
+      - 3001:3000
+    depends_on:
+      - rabbitmq
+      - postgres2
+    networks:
+      - data_net
+  
+  api-user:
+    build: 
+      context: .
+      dockerfile: ./apps/api-user/Dockerfile
+    container_name: api-user
+    environment:
+      API_USER_DATABASE_HOST: postgres
+      API_USER_DATABASE_PORT: 5432
+      API_USER_DATABASE_USER: postgres
+      API_USER_DATABASE_PASSWORD: Postgres2022!
+      API_USER_DATABASE_DB: user
+      API_USER_DATABASE_LOG: "true"
+      RABBITMQ_USER: user
+      RABBITMQ_PASSWORD: 123456
+      RABBITMQ_QUEUE: log-messages
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_VHOST: /
+    ports:
+      - 3000:3000
+    depends_on:
+      - rabbitmq
+      - postgres
+    networks:
+      - data_net
 
 networks:
   data_net:

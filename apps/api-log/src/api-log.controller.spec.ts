@@ -1,22 +1,24 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ApiLogController } from './api-log.controller';
-import { ApiLogService } from './api-log.service';
+import { LogModule } from '@app/entity/domain/log/LogModule';
+import { ConfigModule } from '@nestjs/config';
 
 describe('ApiLogController', () => {
   let apiLogController: ApiLogController;
 
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
+      imports: [ConfigModule.forRoot(), LogModule],
       controllers: [ApiLogController],
-      providers: [ApiLogService],
+      providers: [],
     }).compile();
 
     apiLogController = app.get<ApiLogController>(ApiLogController);
   });
 
   describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(apiLogController.getHello()).toBe('Hello World!');
+    it('should return one log', () => {
+      expect(apiLogController.findOne(1)).toBe('Hello World!');
     });
   });
 });
