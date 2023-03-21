@@ -12,7 +12,7 @@ COPY package.json dist/apps/api-log/
 COPY tsconfig.build.json dist/api-log/
 COPY apps/api-user/tsconfig.app.json dist/apps/api-log/
 
-EXPOSE 3000
+EXPOSE 3001
 
 RUN yarn --cwd dist/apps/api-log
 RUN yarn --cwd dist/apps/libs/modules

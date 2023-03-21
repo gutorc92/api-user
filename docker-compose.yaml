@@ -32,7 +32,7 @@ services:
     image: postgres
     restart: always
     volumes:
-      - ./docker/pg-data:/var/lib/postgresql/data 
+      - ./docker/pg-data2:/var/lib/postgresql/data 
     environment:
       POSTGRES_PASSWORD: "Postgres2022!"
       POSTGRES_DB: log
@@ -84,7 +84,7 @@ services:
       RABBITMQ_PORT: 5672
       RABBITMQ_VHOST: /
     ports:
-      - 3001:3000
+      - 3001:3001
     depends_on:
       - rabbitmq
       - postgres2
